@@ -626,7 +626,7 @@ paths:
                   description: Ukuran maksimal file dalam KB
                 mimeFile:
                   type: string
-                  description: Format MIME file (contoh: jpg, png, pdf)
+                  description: Format MIME file (contoh ; jpg, png, pdf)
                 folderName:
                   type: string
                   description: Nama folder penyimpanan
