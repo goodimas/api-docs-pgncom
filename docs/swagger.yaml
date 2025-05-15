@@ -471,6 +471,105 @@ paths:
           description: Provinsi tidak ditemukan
       security:
         - ApiKeyAuth: []
+  /api/Organization:
+    get:
+      tags:
+        - Organization & Branch
+      summary: Get All Organizations
+      description: Mengambil daftar semua organisasi.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Daftar organisasi
+          content:
+            application/json:
+              example:
+                - organization_id: "org-001"
+                  organization_name: "PT Contoh"
+                - organization_id: "org-002"
+                  organization_name: "CV Sample"
+      security:
+        - ApiKeyAuth: []
+
+  /api/chart:
+    get:
+      summary: Get Organizational Chart
+      description: Mengambil data chart organisasi.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Data chart organisasi
+          content:
+            application/json:
+              example:
+                chart_id: "chart-001"
+                nodes:
+                  - id: "node-1"
+                    name: "CEO"
+                  - id: "node-2"
+                    name: "Manager"
+      security:
+        - ApiKeyAuth: []
+
+  /api/branch/:
+    get:
+      summary: Get All Branches
+      description: Mengambil daftar semua cabang.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Daftar cabang
+          content:
+            application/json:
+              example:
+                - branch_id: "973475dd-be13-4ed2-b192-dccef87178f8"
+                  branch_name: "Cabang Jakarta"
+                - branch_id: "a1234567-abcd-ef01-2345-6789abcdef01"
+                  branch_name: "Cabang Surabaya"
+      security:
+        - ApiKeyAuth: []
+
+  /api/branch/{uuid}:
+    get:
+      summary: Get Branch by UUID
+      description: Mengambil data cabang berdasarkan UUID.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+        - in: path
+          name: uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID cabang
+      responses:
+        '200':
+          description: Data cabang
+          content:
+            application/json:
+              example:
+                branch_id: "973475dd-be13-4ed2-b192-dccef87178f8"
+                branch_name: "Cabang Jakarta"
+                address: "Jl. Merdeka No. 123"
+        '404':
+          description: Cabang tidak ditemukan
+      security:
+        - ApiKeyAuth: []
 
 components:
   securitySchemes:
