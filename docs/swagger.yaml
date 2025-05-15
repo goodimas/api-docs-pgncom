@@ -27,13 +27,12 @@ paths:
     post:
       summary: Login
       description: |
-        Endpoint untuk login pengguna.
-
-        Header wajib:
+        Endpoint untuk login pengguna.  
+        Header **harus** menyertakan:
         - `Content-Type: application/json`
-        - `API_TOKEN: {API_TOKEN}`
+        - `API_TOKEN: {API_TOKEN dari environment}`
 
-        Setelah login berhasil, backend akan menyimpan token ke dalam HttpOnly cookie.
+        Setelah login berhasil, server akan mengembalikan token yang **disimpan oleh backend ke dalam HttpOnly Cookie**.
 
       requestBody:
         required: true
@@ -51,6 +50,7 @@ paths:
               required:
                 - email
                 - password
+
       responses:
         '200':
           description: Login berhasil
@@ -62,16 +62,19 @@ paths:
         '401':
           description: Kredensial salah
 
+      security: []
+
   /api/logout:
     post:
       summary: Logout
       description: |
-        Endpoint untuk logout pengguna.
-
-        Header wajib:
+        Endpoint untuk logout pengguna.  
+        Header **harus** menyertakan:
         - `Content-Type: application/json`
-        - `Authorization: Bearer {token}`
-        - `API_TOKEN: {API_TOKEN}`
+        - `API_TOKEN: {API_TOKEN dari environment}`
+        - `Authorization: Bearer {token dari login}`
+
+        Token harus valid agar proses logout berhasil.
 
       responses:
         '200':
@@ -81,110 +84,189 @@ paths:
               example:
                 message: "Logout success"
         '401':
-          description: Token tidak valid
+          description: Token tidak valid atau tidak ditemukan
+
+      security:
+        - bearerAuth: []
 
   /api/user:
     get:
       summary: Get All Users
-      description: Mengambil seluruh daftar user.
+      description: Mengambil semua data user tanpa filter.
+      parameters: []
       responses:
         '200':
-          description: Sukses
+          description: Daftar semua user
+          content:
+            application/json:
+              example:
+                - nopek: "0014830044"
+                  name: "User A"
+                  email: "usera@example.com"
+                - nopek: "0014830045"
+                  name: "User B"
+                  email: "userb@example.com"
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
   /api/user/{nopek}:
     get:
       summary: Get User by Nopek
       description: Mengambil data user berdasarkan nomor pekerja (nopek).
       parameters:
-        - name: nopek
-          in: path
+        - in: path
+          name: nopek
           required: true
           schema:
             type: string
-            example: "0014830044"
+          description: Nomor pekerja (nopek)
       responses:
         '200':
-          description: Sukses
+          description: Data user ditemukan
+          content:
+            application/json:
+              example:
+                nopek: "0014830044"
+                name: "User A"
+                email: "usera@example.com"
+        '404':
+          description: User tidak ditemukan
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
   /api/approval-user:
     get:
-      summary: Get All Approval Users
-      description: Mendapatkan seluruh informasi atasan dari semua user (layer rendah hingga tertinggi).
+      summary: Get Approval User All
+      description: Mengambil data approval semua user, termasuk informasi atasan dari layer paling rendah hingga tertinggi.
       responses:
         '200':
-          description: Sukses
+          description: Daftar approval user lengkap
+          content:
+            application/json:
+              example:
+                - user_nopek: "0014830044"
+                  approvals:
+                    - layer: 1
+                      nopek: "0010000001"
+                      name: "Atasan 1"
+                    - layer: 2
+                      nopek: "0010000002"
+                      name: "Atasan 2"
+        '401':
+          description: Unauthorized
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
   /api/approval-user/{nopek}:
     get:
       summary: Get Approval User by Nopek
-      description: Mendapatkan atasan dari user berdasarkan nomor pekerja (nopek).
+      description: Mengambil data approval user berdasarkan nomor pekerja (nopek).
       parameters:
-        - name: nopek
-          in: path
+        - in: path
+          name: nopek
           required: true
           schema:
             type: string
-            example: "0014830044"
+          description: Nomor pekerja (nopek)
       responses:
         '200':
-          description: Sukses
+          description: Data approval user ditemukan
+          content:
+            application/json:
+              example:
+                user_nopek: "0014830044"
+                approvals:
+                  - layer: 1
+                    nopek: "0010000001"
+                    name: "Atasan 1"
+                  - layer: 2
+                    nopek: "0010000002"
+                    name: "Atasan 2"
+        '404':
+          description: User tidak ditemukan
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
-  /api/approval-user/{nopek}/{exceptLayer}:
+  /api/approval-user/{nopek}/except/{layers}:
     get:
-      summary: Get Approval User by Nopek (Exclude Layer)
-      description: Mendapatkan atasan dari user dengan pengecualian layer tertentu (misal: 1&2).
+      summary: Get Approval User by Nopek with Excluded Layers
+      description: |
+        Mengambil data approval user berdasarkan nomor pekerja (nopek) dengan mengecualikan layer tertentu.  
+        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
+        Contoh: `2&1` akan mengecualikan layer 2 dan 1.
       parameters:
-        - name: nopek
-          in: path
+        - in: path
+          name: nopek
           required: true
           schema:
             type: string
-            example: "0014830044"
-        - name: exceptLayer
-          in: path
+          description: Nomor pekerja (nopek)
+        - in: path
+          name: layers
           required: true
           schema:
             type: string
-            example: "1&2"
+          description: Layer yang ingin dikecualikan, misal "1" atau "1&2"
       responses:
         '200':
-          description: Sukses
+          description: Data approval user dengan layer tertentu dikecualikan
+          content:
+            application/json:
+              example:
+                user_nopek: "0014830044"
+                excluded_layers: [1,2]
+                approvals:
+                  - layer: 3
+                    nopek: "0010000003"
+                    name: "Atasan 3"
+        '404':
+          description: User tidak ditemukan
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
-  /api/approval/{exceptLayer}:
+  /api/approval/except/{layers}:
     get:
-      summary: Get All Approval (Exclude Layer)
-      description: Mendapatkan semua approval user dengan pengecualian layer tertentu.
+      summary: Get Approval User Except Certain Layers (All Users)
+      description: |
+        Mengambil data approval semua user dengan mengecualikan layer tertentu.  
+        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
+        Contoh: `1&2`
       parameters:
-        - name: exceptLayer
-          in: path
+        - in: path
+          name: layers
           required: true
           schema:
             type: string
-            example: "1&2"
+          description: Layer yang ingin dikecualikan, misal "1" atau "1&2"
       responses:
         '200':
-          description: Sukses
+          description: Data approval semua user dengan layer tertentu dikecualikan
+          content:
+            application/json:
+              example:
+                excluded_layers: [1,2]
+                users:
+                  - user_nopek: "0014830044"
+                    approvals:
+                      - layer: 3
+                        nopek: "0010000003"
+                        name: "Atasan 3"
+        '401':
+          description: Unauthorized
       security:
-        - BearerWithToken: []
+        - ApiKeyAuth: []
 
 components:
   securitySchemes:
-    BearerWithToken:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ApiKeyAuth:
       type: apiKey
       in: header
-      name: Authorization
-      description: |
-        Format: `Bearer {token}`  
-        Tambahkan juga header:
-        - `Content-Type: application/json`
-        - `API_TOKEN: {API_TOKEN dari environment}`
+      name: API_TOKEN
+
+security:
+  - bearerAuth: []
+  - ApiKeyAuth: []
