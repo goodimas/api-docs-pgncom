@@ -773,48 +773,78 @@ paths:
         - ApiKeyAuth: []
 tags:
   - name: Attendance
-    description: Endpoint terkait absensi pengguna (check-in dan check-out)
+    description: Endpoint untuk kehadiran (check-in dan check-out)
 
 paths:
   /api/checkin-out:
     post:
-      summary: Check-In / Check-Out
+      summary: Check-In / Check-Out Attendance
       tags:
         - Attendance
-      description: Endpoint untuk melakukan check-in atau check-out berdasarkan status dan lokasi pengguna.
+      description: >
+        Endpoint untuk melakukan check-in atau check-out kehadiran.
+        File/foto hanya akan disimpan **nama filenya saja** di database, dan disarankan
+        diunggah menggunakan endpoint upload yang tersedia di tag Object Storage.
       parameters:
         - $ref: '#/components/parameters/ContentType'
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/APIToken'
         - $ref: '#/components/parameters/AppToken'
       requestBody:
+        required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
+              required:
+                - ClientType
+                - TagNo
+                - ReaderNo
+                - device_id
+                - location
+                - file
+                - Checktype
+                - created_by
               properties:
-                type:
+                ClientType:
+                  type: integer
+                  example: 101
+                  description: Jenis client (contoh: 101 untuk Android)
+                TagNo:
                   type: string
-                  enum: [checkin, checkout]
-                  description: Jenis absensi (checkin atau checkout)
-                latitude:
+                  example: "2068977335"
+                  description: Nomor Tag RFID
+                ReaderNo:
+                  type: integer
+                  example: 1
+                  description: Nomor reader device
+                device_id:
                   type: string
-                  description: Koordinat latitude lokasi user
-                longitude:
+                  example: "UHF-Reader-1"
+                  description: ID unik perangkat pembaca
+                location:
                   type: string
-                  description: Koordinat longitude lokasi user
-                description:
-                  type: string
-                  description: Keterangan tambahan
+                  example: "Gate-1"
+                  description: Lokasi pembaca RFID
                 file:
                   type: string
-                  format: binary
-                  description: (Opsional) Foto saat check-in/out
+                  example: "photo.jpg"
+                  description: Nama file atau foto yang telah diunggah ke object storage
+                Checktype:
+                  type: string
+                  enum: [IN, OUT]
+                  example: "IN"
+                  description: Jenis check (IN untuk masuk, OUT untuk keluar)
+                created_by:
+                  type: string
+                  example: "Android"
+                  description: Sumber atau platform yang membuat data ini
       responses:
         '200':
-          description: Status check-in/check-out berhasil dikirim
+          description: Check-in/out berhasil dicatat
       security:
         - ApiKeyAuth: []
+
 
 components:
   securitySchemes:
