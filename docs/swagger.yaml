@@ -1,504 +1,496 @@
-{
-  "openapi": "3.0.3",
-  "info": {
-    "title": "PGNCOM API Documentation",
-    "description": "Selamat datang di dokumentasi resmi API PGNCOM\nPT PGAS Telekomunikasi Nusantara (PGNCOM)\n\nDokumentasi ini menyediakan referensi lengkap untuk seluruh layanan API yang tersedia di lingkungan PGNCOM. API ini dirancang untuk mendukung berbagai kebutuhan integrasi aplikasi, automasi proses bisnis, pengelolaan data internal, serta pengembangan layanan digital yang terhubung secara aman dan efisien.\n\nMelalui koleksi API yang telah disediakan, Anda dapat mengakses berbagai layanan utama PGNCOM seperti:\n- Autentikasi pengguna.\n- Manajemen user dan approval.\n- Integrasi layanan email gateway.\n- Layanan referensi data negara, kota, dan organisasi.\n- Penyimpanan dan manajemen file melalui MinIO Storage.\n- Layanan presensi (Attendance).\n- Dan layanan lainnya yang terus berkembang.\n\nDokumentasi ini juga menyertakan panduan penggunaan, parameter, dan contoh request-response untuk memudahkan developer dalam implementasi dan integrasi ke sistem yang ada.",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://api.pgncom.co.id"
-    }
-  ],
-  "paths": {
-    "/api/user": {
-      "get": {
-        "summary": "Get all users",
-        "description": "Mengambil semua user tanpa filter.",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Daftar semua user",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "nopek": "0014830044",
-                    "name": "User A",
-                    "email": "usera@example.com"
-                  },
-                  {
-                    "nopek": "0014830045",
-                    "name": "User B",
-                    "email": "userb@example.com"
-                  }
-                ]
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
+openapi: 3.0.3
+info:
+  title: PGNCOM API Documentation
+  description: |
+    Selamat datang di dokumentasi resmi API PGNCOM
+    PT PGAS Telekomunikasi Nusantara (PGNCOM)
+
+    Dokumentasi ini menyediakan referensi lengkap untuk seluruh layanan API yang tersedia di lingkungan PGNCOM. API ini dirancang untuk mendukung berbagai kebutuhan integrasi aplikasi, automasi proses bisnis, pengelolaan data internal, serta pengembangan layanan digital yang terhubung secara aman dan efisien.
+
+    Melalui koleksi API yang telah disediakan, Anda dapat mengakses berbagai layanan utama PGNCOM seperti:
+    - Autentikasi pengguna.
+    - Manajemen user dan approval.
+    - Integrasi layanan email gateway.
+    - Layanan referensi data negara, kota, dan organisasi.
+    - Penyimpanan dan manajemen file melalui MinIO Storage.
+    - Layanan presensi (Attendance).
+    - Dan layanan lainnya yang terus berkembang.
+
+    Dokumentasi ini juga menyertakan panduan penggunaan, parameter, dan contoh request-response untuk memudahkan developer dalam implementasi dan integrasi ke sistem yang ada.
+  version: 1.0.0
+servers:
+  - url: https://api.pgncom.co.id
+paths:
+  /api/user:
+    get:
+      summary: Get all users
+      description: Mengambil semua user tanpa filter.
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      responses:
+        '200':
+          description: Daftar semua user
+          content:
+            application/json:
+              example:
+                - nopek: "0014830044"
+                  name: User A
+                  email: usera@example.com
+                - nopek: "0014830045"
+                  name: User B
+                  email: userb@example.com
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+  /api/user/{nopek}:
+    get:
+      summary: Get user by nopek
+      description: Mengambil user berdasarkan nomor pekerja (nopek).
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+          description: Nomor pekerja (nopek)
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      responses:
+        '200':
+          description: Detail user
+          content:
+            application/json:
+              example:
+                nopek: "0014830044"
+                name: User A
+                email: usera@example.com
+                department: IT
+        '404':
+          description: User tidak ditemukan
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+  /api/approval-user:
+    get:
+      summary: Get all approval users
+      description: Mengambil semua user approval, menampilkan atasan dari layer paling rendah hingga tertinggi.
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      responses:
+        '200':
+          description: Daftar approval user lengkap
+          content:
+            application/json:
+              example:
+                - nopek: "0014830044"
+                  name: User A
+                  approvals:
+                    - layer: 1
+                      atasan: User B
+                    - layer: 2
+                      atasan: User C
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+  /api/approval-user/{nopek}:
+    get:
+      summary: Get approval user by nopek
+      description: Mengambil data approval user berdasarkan nopek.
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+          description: Nomor pekerja (nopek)
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      responses:
+        '200':
+          description: Data approval user
+          content:
+            application/json:
+              example:
+                nopek: "0014830044"
+                name: User A
+                approvals:
+                  - layer: 1
+                    atasan: User B
+                  - layer: 2
+                    atasan: User C
+        '404':
+          description: User tidak ditemukan
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+  /api/approval-user/{nopek}/{exceptLayers}:
+    get:
+      summary: Get approval user by nopek except layers
+      description: Mengambil data approval user berdasarkan nopek, mengecualikan layer tertentu. Layer yang dikecualikan dipisahkan dengan '&', misal '2&1'.
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+          description: Nomor pekerja (nopek)
+        - name: exceptLayers
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "2&1"
+          description: Layer yang dikecualikan, contoh '2&1'
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      responses:
+        '200':
+          description: Data approval user tanpa layer tertentu
+          content:
+            application/json:
+              example:
+                nopek: "0014830044"
+                name: User A
+                approvals:
+                  - layer: 3
+                    atasan: User D
+        '404':
+          description: User tidak ditemukan
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+
+  # Tambahan endpoint baru untuk email gateway
+  /api/mail-gateway:
+    post:
+      summary: Kirim email via Email Gateway
+      description: |
+        Endpoint ini digunakan untuk mengirim email melalui email gateway PGNCOM.
+
+        Header yang digunakan sama dengan API lain:
+        - Content-Type: application/json
+        - Authorization: Bearer {token}
+        - API_TOKEN
+        - APP_TOKEN_CURRENT_APP
+
+        Contoh body:
+        ```json
+        {
+          "to": ["email1@domain.com", "email2@domain.com"],
+          "cc": ["cc1@domain.com"],
+          "bcc": ["bcc1@domain.com"],
+          "subject": "Judul Email",
+          "message": "Isi email dengan format HTML atau plain text"
         }
-      }
-    },
-    "/api/user/{nopek}": {
-      "get": {
-        "summary": "Get user by nopek",
-        "description": "Mengambil user berdasarkan nomor pekerja (nopek).",
-        "parameters": [
-          {
-            "name": "nopek",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "0014830044"
-            },
-            "description": "Nomor pekerja (nopek)"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Detail user",
-            "content": {
-              "application/json": {
-                "example": {
-                  "nopek": "0014830044",
-                  "name": "User A",
-                  "email": "usera@example.com",
-                  "department": "IT"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User tidak ditemukan"
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
-        }
-      }
-    },
-    "/api/approval-user": {
-      "get": {
-        "summary": "Get all approval users",
-        "description": "Mengambil semua user approval, menampilkan atasan dari layer paling rendah hingga tertinggi.",
-        "parameters": [
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Daftar approval user lengkap",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "nopek": "0014830044",
-                    "name": "User A",
-                    "approvals": [
-                      {
-                        "layer": 1,
-                        "atasan": "User B"
-                      },
-                      {
-                        "layer": 2,
-                        "atasan": "User C"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
-        }
-      }
-    },
-    "/api/approval-user/{nopek}": {
-      "get": {
-        "summary": "Get approval user by nopek",
-        "description": "Mengambil data approval user berdasarkan nopek.",
-        "parameters": [
-          {
-            "name": "nopek",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "0014830044"
-            },
-            "description": "Nomor pekerja (nopek)"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Data approval user",
-            "content": {
-              "application/json": {
-                "example": {
-                  "nopek": "0014830044",
-                  "name": "User A",
-                  "approvals": [
-                    {
-                      "layer": 1,
-                      "atasan": "User B"
-                    },
-                    {
-                      "layer": 2,
-                      "atasan": "User C"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User tidak ditemukan"
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
-        }
-      }
-    },
-    "/api/approval-user/{nopek}/{exceptLayers}": {
-      "get": {
-        "summary": "Get approval user by nopek except layers",
-        "description": "Mengambil data approval user berdasarkan nopek, mengecualikan layer tertentu. Layer yang dikecualikan dipisahkan dengan '&', misal '2&1'.",
-        "parameters": [
-          {
-            "name": "nopek",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "0014830044"
-            },
-            "description": "Nomor pekerja (nopek)"
-          },
-          {
-            "name": "exceptLayers",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "2&1"
-            },
-            "description": "Layer yang dikecualikan, contoh '2&1'"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Data approval user tanpa layer tertentu",
-            "content": {
-              "application/json": {
-                "example": {
-                  "nopek": "0014830044",
-                  "name": "User A",
-                  "approvals": [
-                    {
-                      "layer": 3,
-                      "atasan": "User D"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User tidak ditemukan"
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
-        }
-      }
-    },
-    "/api/approval/{exceptLayers}": {
-      "get": {
-        "summary": "Get all approval users except certain layers",
-        "description": "Mengambil semua approval user dengan mengecualikan layer tertentu, contoh: '1&2'.",
-        "parameters": [
-          {
-            "name": "exceptLayers",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "1&2"
-            },
-            "description": "Layer yang dikecualikan"
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": ["application/json"]
-            },
-            "description": "Content-Type harus application/json"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer {token}"
-            },
-            "description": "Token JWT hasil login"
-          },
-          {
-            "name": "API_TOKEN",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "xxxxx"
-            },
-            "description": "Token API dari environment"
-          },
-          {
-            "name": "APP_TOKEN_CURRENT_APP",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "app_token_value"
-            },
-            "description": "Token aplikasi saat ini"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Daftar approval user tanpa layer tertentu",
-            "content": {
-              "application/json": {
-                "example": [
-                  {
-                    "nopek": "0014830044",
-                    "name": "User A",
-                    "approvals": [
-                      {
-                        "layer": 3,
-                        "atasan": "User D"
-                      }
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Header tidak lengkap atau token salah"
-          }
-        }
-      }
-    }
-  }
-}
+        ```
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: Daftar penerima utama email
+                cc:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: Daftar penerima cc email (optional)
+                bcc:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                  description: Daftar penerima bcc email (optional)
+                subject:
+                  type: string
+                  description: Judul email
+                message:
+                  type: string
+                  description: Isi email, bisa dalam format HTML atau plain text
+              required:
+                - to
+                - subject
+                - message
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+      responses:
+        '200':
+          description: Email berhasil dikirim
+          content:
+            application/json:
+              example:
+                status: "success"
+                message: "Email sent successfully"
+        '400':
+          description: Bad Request - Data input tidak valid
+          content:
+            application/json:
+              example:
+                status: "error"
+                message: "Invalid email format"
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
+        '500':
+          description: Internal Server Error - Kesalahan server saat mengirim email
+/api/mail-gateway:
+    post:
+      summary: Kirim email melalui Email Gateway PGNCOM
+      description: >
+        Endpoint ini digunakan untuk mengirimkan email menggunakan layanan Email Gateway PGNCOM.
+        Field "from" dan "smtp_from" wajib diisi dengan nilai default yaitu "noreply" dan tidak perlu dikustomisasi.
+        Gunakan field `to`, `cc`, dan `bcc` dalam bentuk array untuk menentukan penerima email.
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [application/json]
+          description: Content-Type harus application/json
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+            example: Bearer {token}
+          description: Token JWT hasil login
+        - name: API_TOKEN
+          in: header
+          required: true
+          schema:
+            type: string
+            example: xxxxx
+          description: Token API dari environment
+        - name: APP_TOKEN_CURRENT_APP
+          in: header
+          required: true
+          schema:
+            type: string
+            example: app_token_value
+          description: Token aplikasi saat ini
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - smtp_from
+                - from
+                - from_name
+                - to
+                - subject
+                - mail_body
+              properties:
+                smtp_from:
+                  type: string
+                  example: noreply
+                from:
+                  type: string
+                  example: noreply@pgncom.co.id
+                from_name:
+                  type: string
+                  example: NOREPLY PGNCOM
+                to:
+                  type: array
+                  items:
+                    type: string
+                  example: [ "dimas.aria@pgncom.co.id" ]
+                cc:
+                  type: array
+                  items:
+                    type: string
+                  example: []
+                bcc:
+                  type: array
+                  items:
+                    type: string
+                  example: []
+                subject:
+                  type: string
+                  example: Test dari Development
+                mail_body:
+                  type: string
+                  format: html
+                  example: "<h1>Pengumuman Bahwa Dokumen Segera Ditandatangani</h1><p>Semoga harimu menyenangkan.</p>"
+                queue_delay:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Email berhasil dikirim
+          content:
+            application/json:
+              example:
+                success: true
+                message: Email berhasil dikirim
+        '400':
+          description: Bad request - data tidak valid
+        '401':
+          description: Unauthorized - Header tidak lengkap atau token salah
