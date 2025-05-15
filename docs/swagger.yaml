@@ -283,13 +283,9 @@ paths:
       summary: Send Email via Mail Gateway
       description: |
         Endpoint untuk mengirim email menggunakan mail gateway PGNCOM.  
-        Header **harus** menyertakan:
-        - `Content-Type: application/json`
-        - `API_TOKEN: {API_TOKEN dari environment}`
-        - `Authorization: Bearer {token dari login}`
-        - `APP_TOKEN_CURRENT_APP: {app_token aplikasi yang mengakses}`
+      
 
-        Field `from` biasanya menggunakan "noreply@pgncom.co.id" dan **tidak perlu diganti atau dicustom**.
+        Field `from` dan smtp_from tidak perlu diganti**.
 
       requestBody:
         required: true
@@ -376,6 +372,105 @@ paths:
         '500':
           description: Kesalahan server saat memproses pengiriman email
 
+  /api/countries:
+    get:
+      summary: Get All Countries
+      description: Mengambil daftar semua negara.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Daftar semua negara
+          content:
+            application/json:
+              example:
+                - country_id: 1
+                  country_name: "Indonesia"
+                - country_id: 2
+                  country_name: "Malaysia"
+      security:
+        - ApiKeyAuth: []
+
+  /api/province:
+    get:
+      summary: Get All Provinces
+      description: Mengambil daftar semua provinsi.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Daftar semua provinsi
+          content:
+            application/json:
+              example:
+                - province_id: 11
+                  province_name: "Jawa Barat"
+                - province_id: 12
+                  province_name: "Jawa Timur"
+      security:
+        - ApiKeyAuth: []
+
+  /api/cities:
+    get:
+      summary: Get All Cities
+      description: Mengambil daftar semua kota/kabupaten.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Daftar semua kota/kabupaten
+          content:
+            application/json:
+              example:
+                - city_id: 101
+                  city_name: "Bandung"
+                  province_id: 11
+                - city_id: 102
+                  city_name: "Surabaya"
+                  province_id: 12
+      security:
+        - ApiKeyAuth: []
+
+  /api/cities/{province_id}:
+    get:
+      summary: Get Cities By Province ID
+      description: Mengambil daftar kota/kabupaten berdasarkan ID provinsi.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+        - in: path
+          name: province_id
+          required: true
+          schema:
+            type: integer
+          description: ID provinsi
+      responses:
+        '200':
+          description: Daftar kota/kabupaten dalam provinsi
+          content:
+            application/json:
+              example:
+                - city_id: 101
+                  city_name: "Bandung"
+                  province_id: 11
+                - city_id: 103
+                  city_name: "Bogor"
+                  province_id: 11
+        '404':
+          description: Provinsi tidak ditemukan
+      security:
+        - ApiKeyAuth: []
 
 components:
   securitySchemes:
