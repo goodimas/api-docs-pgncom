@@ -25,6 +25,8 @@ servers:
 paths:
   /api/login:
     post:
+      tags:
+        - Authentication
       summary: Login
       description: |
         Endpoint untuk login pengguna.  
@@ -66,6 +68,8 @@ paths:
 
   /api/logout:
     post:
+      tags:
+        - Authentication
       summary: Logout
       description: |
         Endpoint untuk logout pengguna.  
@@ -91,6 +95,8 @@ paths:
 
   /api/user:
     get:
+      tags:
+        - Users
       summary: Get All Users
       description: Mengambil semua data user tanpa filter.
       parameters:
@@ -115,6 +121,8 @@ paths:
 
   /api/user/{nopek}:
     get:
+      tags:
+        - Users
       summary: Get User by Nopek
       description: Mengambil data user berdasarkan nomor pekerja (nopek).
       parameters:
@@ -172,6 +180,8 @@ paths:
 
   /api/approval-user/{nopek}:
     get:
+      tags:
+        - Approval
       summary: Get Approval User by Nopek
       description: Mengambil data approval user berdasarkan nomor pekerja (nopek).
       parameters:
@@ -206,6 +216,8 @@ paths:
 
   /api/approval-user/{nopek}/{layers}:
     get:
+      tags:
+        - Approval
       summary: Get Approval User by Nopek with Excluded Layers
       description: |
         Mengambil data approval user berdasarkan nomor pekerja (nopek) dengan mengecualikan layer tertentu.  
@@ -245,6 +257,8 @@ paths:
 
   /api/approval/{layers}:
     get:
+      tags:
+        - Approval
       summary: Get Approval User Except Certain Layers (All Users)
       description: |
         Mengambil data approval semua user dengan mengecualikan layer tertentu.  
@@ -376,6 +390,8 @@ paths:
 
   /api/countries:
     get:
+      tags:
+        - Countries & Cities
       summary: Get All Countries
       description: Mengambil daftar semua negara.
       parameters:
@@ -398,6 +414,8 @@ paths:
 
   /api/province:
     get:
+      tags:
+        - Countries & Cities
       summary: Get All Provinces
       description: Mengambil daftar semua provinsi.
       parameters:
@@ -420,6 +438,8 @@ paths:
 
   /api/cities:
     get:
+      tags:
+        - Countries & Cities
       summary: Get All Cities
       description: Mengambil daftar semua kota/kabupaten.
       parameters:
@@ -444,6 +464,8 @@ paths:
 
   /api/cities/{province_id}:
     get:
+      tags:
+        - Countries & Cities
       summary: Get Cities By Province ID
       description: Mengambil daftar kota/kabupaten berdasarkan ID provinsi.
       parameters:
