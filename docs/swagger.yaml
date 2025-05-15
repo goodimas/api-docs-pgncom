@@ -771,6 +771,50 @@ paths:
           description: File berhasil dihapus
       security:
         - ApiKeyAuth: []
+tags:
+  - name: Attendance
+    description: Endpoint terkait absensi pengguna (check-in dan check-out)
+
+paths:
+  /api/checkin-out:
+    post:
+      summary: Check-In / Check-Out
+      tags:
+        - Attendance
+      description: Endpoint untuk melakukan check-in atau check-out berdasarkan status dan lokasi pengguna.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [checkin, checkout]
+                  description: Jenis absensi (checkin atau checkout)
+                latitude:
+                  type: string
+                  description: Koordinat latitude lokasi user
+                longitude:
+                  type: string
+                  description: Koordinat longitude lokasi user
+                description:
+                  type: string
+                  description: Keterangan tambahan
+                file:
+                  type: string
+                  format: binary
+                  description: (Opsional) Foto saat check-in/out
+      responses:
+        '200':
+          description: Status check-in/check-out berhasil dikirim
+      security:
+        - ApiKeyAuth: []
 
 components:
   securitySchemes:
