@@ -280,6 +280,8 @@ paths:
 
   /api/mail-gateway:
     post:
+      tags:
+        - Email Gateway
       summary: Send Email via Mail Gateway
       description: |
         Endpoint untuk mengirim email menggunakan mail gateway PGNCOM.  
@@ -497,6 +499,8 @@ paths:
 
   /api/chart:
     get:
+      tags:
+        - Organization & Branch
       summary: Get Organizational Chart
       description: Mengambil data chart organisasi.
       parameters:
@@ -521,6 +525,8 @@ paths:
 
   /api/branch/:
     get:
+      tags:
+        - Organization & Branch
       summary: Get All Branches
       description: Mengambil daftar semua cabang.
       parameters:
@@ -543,6 +549,8 @@ paths:
 
   /api/branch/{uuid}:
     get:
+      tags:
+        - Organization & Branch
       summary: Get Branch by UUID
       description: Mengambil data cabang berdasarkan UUID.
       parameters:
