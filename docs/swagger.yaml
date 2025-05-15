@@ -601,6 +601,175 @@ paths:
       security:
         - ApiKeyAuth: []
 
+paths:
+  /api/upload:
+    post:
+      summary: Upload Single File
+      tags:
+        - Object Storage
+      description: Mengunggah satu file dengan validasi ukuran dan tipe MIME.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                maxsize:
+                  type: integer
+                  description: Ukuran maksimal file dalam KB
+                mimeFile:
+                  type: string
+                  description: Format MIME file (contoh: jpg, png, pdf)
+                folderName:
+                  type: string
+                  description: Nama folder penyimpanan
+                file:
+                  type: string
+                  format: binary
+                  description: File yang diunggah
+      responses:
+        '200':
+          description: File berhasil diunggah
+      security:
+        - ApiKeyAuth: []
+
+  /api/UploadMultipleFiles:
+    post:
+      summary: Upload Multiple Files (Single Parameter)
+      tags:
+        - Object Storage
+      description: Mengunggah banyak file dalam satu parameter (comma-separated).
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                maxsize:
+                  type: integer
+                mimeFile:
+                  type: string
+                folderName:
+                  type: string
+                file:
+                  type: string
+                  description: Nama file dipisahkan dengan koma (contoh: 1.jpg,2.png)
+      responses:
+        '200':
+          description: File berhasil diunggah
+      security:
+        - ApiKeyAuth: []
+
+  /api/UploadGroupedFiles:
+    post:
+      summary: Upload Multiple Files (Grouped Parameters)
+      tags:
+        - Object Storage
+      description: Mengunggah banyak file dengan masing-masing parameter sendiri.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                maxsize:
+                  type: array
+                  items:
+                    type: integer
+                mimeFile:
+                  type: array
+                  items:
+                    type: string
+                folderName:
+                  type: array
+                  items:
+                    type: string
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Semua file berhasil diunggah
+      security:
+        - ApiKeyAuth: []
+
+  /api/viewFile:
+    post:
+      summary: View File
+      tags:
+        - Object Storage
+      description: Melihat file tertentu berdasarkan folder dan nama file.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_folder:
+                  type: string
+                name_folder:
+                  type: string
+                file:
+                  type: string
+      responses:
+        '200':
+          description: File ditemukan
+      security:
+        - ApiKeyAuth: []
+
+  /api/deleteFile:
+    post:
+      summary: Delete File
+      tags:
+        - Object Storage
+      description: Menghapus file dari penyimpanan.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_folder:
+                  type: string
+                name_folder:
+                  type: string
+                file:
+                  type: string
+      responses:
+        '200':
+          description: File berhasil dihapus
+      security:
+        - ApiKeyAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
