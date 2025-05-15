@@ -107,7 +107,7 @@ paths:
                   name: "User B"
                   email: "userb@example.com"
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
   /api/user/{nopek}:
     get:
@@ -132,7 +132,7 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
   /api/approval-user:
     get:
@@ -155,7 +155,7 @@ paths:
         '401':
           description: Unauthorized
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
   /api/approval-user/{nopek}:
     get:
@@ -185,7 +185,7 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
   /api/approval-user/{nopek}/except/{layers}:
     get:
@@ -222,7 +222,7 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
   /api/approval/except/{layers}:
     get:
@@ -254,7 +254,7 @@ paths:
         '401':
           description: Unauthorized
       security:
-        - ApiKeyAuth: []
+        - CustomHeaderAuth: []
 
 components:
   securitySchemes:
@@ -266,7 +266,24 @@ components:
       type: apiKey
       in: header
       name: API_TOKEN
+    AppTokenAuth:
+      type: apiKey
+      in: header
+      name: APP_TOKEN_CURRENT_APP
+    ContentType:
+      type: apiKey
+      in: header
+      name: Content-Type
+    CustomHeaderAuth:
+      type: apiKey
+      name: CombinedAuth
+      in: header
+      description: |
+        Header gabungan yang harus disertakan:
+        - `Content-Type: application/json`
+        - `Authorization: Bearer {token}`
+        - `API_TOKEN: {token dari environment}`
+        - `APP_TOKEN_CURRENT_APP: {token dari aplikasi}`
 
 security:
-  - bearerAuth: []
-  - ApiKeyAuth: []
+  - CustomHeaderAuth: []
