@@ -33,6 +33,7 @@ paths:
         - `API_TOKEN: {API_TOKEN dari environment}`
 
         Setelah login berhasil, server akan mengembalikan token yang **disimpan oleh backend ke dalam HttpOnly Cookie**.
+
       requestBody:
         required: true
         content:
@@ -49,6 +50,7 @@ paths:
               required:
                 - email
                 - password
+
       responses:
         '200':
           description: Login berhasil
@@ -59,6 +61,7 @@ paths:
                 token: "jwt_token_value"
         '401':
           description: Kredensial salah
+
       security: []
 
   /api/logout:
@@ -70,7 +73,9 @@ paths:
         - `Content-Type: application/json`
         - `API_TOKEN: {API_TOKEN dari environment}`
         - `Authorization: Bearer {token dari login}`
-        - `APP_TOKEN_CURRENT_APP: {token dari aplikasi aktif}`
+
+        Token harus valid agar proses logout berhasil.
+
       responses:
         '200':
           description: Logout berhasil
@@ -80,16 +85,19 @@ paths:
                 message: "Logout success"
         '401':
           description: Token tidak valid atau tidak ditemukan
+
       security:
         - bearerAuth: []
-        - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/user:
     get:
       summary: Get All Users
       description: Mengambil semua data user tanpa filter.
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
       responses:
         '200':
           description: Daftar semua user
@@ -103,20 +111,23 @@ paths:
                   name: "User B"
                   email: "userb@example.com"
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/user/{nopek}:
     get:
       summary: Get User by Nopek
       description: Mengambil data user berdasarkan nomor pekerja (nopek).
       parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
           schema:
             type: string
+          description: Nomor pekerja (nopek)
       responses:
         '200':
           description: Data user ditemukan
@@ -129,14 +140,17 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/approval-user:
     get:
       summary: Get Approval User All
-      description: Mengambil data approval semua user.
+      description: Mengambil data approval semua user, termasuk informasi atasan dari layer paling rendah hingga tertinggi.
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
       responses:
         '200':
           description: Daftar approval user lengkap
@@ -154,20 +168,23 @@ paths:
         '401':
           description: Unauthorized
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/approval-user/{nopek}:
     get:
       summary: Get Approval User by Nopek
       description: Mengambil data approval user berdasarkan nomor pekerja (nopek).
       parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
           schema:
             type: string
+          description: Nomor pekerja (nopek)
       responses:
         '200':
           description: Data approval user ditemukan
@@ -185,17 +202,20 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/approval-user/{nopek}/{layers}:
     get:
       summary: Get Approval User by Nopek with Excluded Layers
       description: |
         Mengambil data approval user berdasarkan nomor pekerja (nopek) dengan mengecualikan layer tertentu.  
-        Gunakan `&` sebagai pemisah.
+        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
+        Contoh: `2&1` akan mengecualikan layer 2 dan 1.
       parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
@@ -221,16 +241,20 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/approval/{layers}:
     get:
       summary: Get Approval User Except Certain Layers (All Users)
       description: |
-        Mengambil data approval semua user dengan mengecualikan layer tertentu.
+        Mengambil data approval semua user dengan mengecualikan layer tertentu.  
+        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
+        Contoh: `1&2`
       parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: layers
           required: true
@@ -252,22 +276,21 @@ paths:
         '401':
           description: Unauthorized
       security:
-        - bearerAuth: []
         - ApiKeyAuth: []
-        - AppKeyAuth: []
 
   /api/mail-gateway:
     post:
-      summary: Kirim Email via Mail Gateway
+      summary: Send Email via Mail Gateway
       description: |
-        Endpoint untuk mengirim email melalui Mail Gateway PGNCOM.  
-        Field `from` bersifat tetap dan tidak dapat diganti.
-
-        Header **harus menyertakan**:
+        Endpoint untuk mengirim email menggunakan mail gateway PGNCOM.  
+        Header **harus** menyertakan:
         - `Content-Type: application/json`
-        - `Authorization: Bearer {token}`
-        - `API_TOKEN: {API_TOKEN}`
-        - `APP_TOKEN_CURRENT_APP: {APP_TOKEN dari aplikasi}`
+        - `API_TOKEN: {API_TOKEN dari environment}`
+        - `Authorization: Bearer {token dari login}`
+        - `APP_TOKEN_CURRENT_APP: {app_token aplikasi yang mengakses}`
+
+        Field `from` biasanya menggunakan "noreply@pgncom.co.id" dan **tidak perlu diganti atau dicustom**.
+
       requestBody:
         required: true
         content:
@@ -278,50 +301,81 @@ paths:
                 smtp_from:
                   type: string
                   example: noreply
+                  description: SMTP sender identifier, biasanya "noreply"
                 from:
                   type: string
                   example: noreply@pgncom.co.id
+                  description: Alamat email pengirim, default noreply@pgncom.co.id
                 from_name:
                   type: string
                   example: NOREPLY PGNCOM
+                  description: Nama pengirim email
                 to:
                   type: array
                   items:
                     type: string
-                  example: ["dimas.aria@pgncom.co.id"]
+                  example:
+                    - dimas.aria@pgncom.co.id
+                  description: Daftar email penerima utama
                 cc:
                   type: array
                   items:
                     type: string
+                  example: []
+                  description: Daftar email penerima cc (carbon copy)
                 bcc:
                   type: array
                   items:
                     type: string
+                  example: []
+                  description: Daftar email penerima bcc (blind carbon copy)
                 subject:
                   type: string
                   example: Test dari Development
+                  description: Subjek email
                 mail_body:
                   type: string
-                  format: html
                   example: "<h1>Pengumuman Bahwa Dokumen Segera Ditandatangani</h1><p>Semoga harimu menyenangkan.</p>"
+                  description: Isi email dalam format HTML
                 queue_delay:
                   type: integer
                   example: 5
+                  description: Delay dalam antrian pengiriman email (dalam menit)
+
+              required:
+                - smtp_from
+                - from
+                - from_name
+                - to
+                - subject
+                - mail_body
+                - queue_delay
+
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+
       responses:
         '200':
-          description: Email berhasil dikirim
+          description: Email berhasil dikirim atau masuk ke antrian pengiriman
           content:
             application/json:
               example:
-                message: "Email sent successfully"
+                message: "Email queued successfully"
+                queue_id: "1234567890"
         '400':
-          description: Bad Request
+          description: Permintaan tidak valid (misalnya format email salah)
+          content:
+            application/json:
+              example:
+                error: "Invalid email format"
         '401':
-          description: Unauthorized
-      security:
-        - bearerAuth: []
-        - ApiKeyAuth: []
-        - AppKeyAuth: []
+          description: Token tidak valid atau tidak ditemukan
+        '500':
+          description: Kesalahan server saat memproses pengiriman email
+
 
 components:
   securitySchemes:
@@ -333,12 +387,40 @@ components:
       type: apiKey
       in: header
       name: API_TOKEN
-    AppKeyAuth:
-      type: apiKey
+
+  parameters:
+    ContentType:
+      name: Content-Type
       in: header
+      required: true
+      schema:
+        type: string
+        example: application/json
+
+    Authorization:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+        example: Bearer {token}
+
+    APIToken:
+      name: API_TOKEN
+      in: header
+      required: true
+      schema:
+        type: string
+        example: your_api_token
+
+    AppToken:
       name: APP_TOKEN_CURRENT_APP
+      in: header
+      required: true
+      schema:
+        type: string
+        example: your_app_token
 
 security:
   - bearerAuth: []
   - ApiKeyAuth: []
-  - AppKeyAuth: []
