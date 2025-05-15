@@ -1,11 +1,100 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: My API
-  version: 1.0.0
+  title: PGNCOM API Documentation
+  description: |
+    Selamat datang di dokumentasi resmi API PGNCOM  
+    PT PGAS Telekomunikasi Nusantara (PGNCOM)
+
+    Dokumentasi ini menyediakan referensi lengkap untuk seluruh layanan API yang tersedia di lingkungan PGNCOM. API ini dirancang untuk mendukung berbagai kebutuhan integrasi aplikasi, automasi proses bisnis, pengelolaan data internal, serta pengembangan layanan digital yang terhubung secara aman dan efisien.
+
+    Melalui koleksi API yang telah disediakan, Anda dapat mengakses berbagai layanan utama PGNCOM seperti:
+    - Autentikasi pengguna.
+    - Manajemen user dan approval.
+    - Integrasi layanan email gateway.
+    - Layanan referensi data negara, kota, dan organisasi.
+    - Penyimpanan dan manajemen file melalui MinIO Storage.
+    - Layanan presensi (Attendance).
+    - Dan layanan lainnya yang terus berkembang.
+
+    Dokumentasi ini juga menyertakan panduan penggunaan, parameter, dan contoh request-response untuk memudahkan developer dalam implementasi dan integrasi ke sistem yang ada.
+  version: "1.0.0"
+
+servers:
+  - url: https://api.pgncom.co.id
+
 paths:
-  /hello:
-    get:
-      summary: Say Hello
+  /auth/login:
+    post:
+      summary: Login
+      description: |
+        Endpoint untuk login pengguna.  
+        Header **harus** menyertakan:
+        - `Content-Type: application/json`
+        - `API_TOKEN: {API_TOKEN dari environment}`
+
+        Setelah login berhasil, server akan mengembalikan token yang **disimpan oleh backend ke dalam HttpOnly Cookie**.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: yourpassword
+              required:
+                - email
+                - password
+
       responses:
         '200':
-          description: Successful
+          description: Login berhasil
+          content:
+            application/json:
+              example:
+                message: "Login success"
+                token: "jwt_token_value"
+        '401':
+          description: Kredensial salah
+
+      parameters: []
+      security: []
+
+  /auth/logout:
+    post:
+      summary: Logout
+      description: |
+        Endpoint untuk logout pengguna.  
+        Header **harus** menyertakan:
+        - `Content-Type: application/json`
+        - `API_TOKEN: {API_TOKEN dari environment}`
+        - `Authorization: Bearer {token dari login}`
+
+        Token harus valid agar proses logout berhasil.
+
+      responses:
+        '200':
+          description: Logout berhasil
+          content:
+            application/json:
+              example:
+                message: "Logout success"
+        '401':
+          description: Token tidak valid atau tidak ditemukan
+
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas: {}
