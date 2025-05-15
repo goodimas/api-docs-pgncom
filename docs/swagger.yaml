@@ -33,7 +33,6 @@ paths:
         - `API_TOKEN: {API_TOKEN dari environment}`
 
         Setelah login berhasil, server akan mengembalikan token yang **disimpan oleh backend ke dalam HttpOnly Cookie**.
-
       requestBody:
         required: true
         content:
@@ -50,7 +49,6 @@ paths:
               required:
                 - email
                 - password
-
       responses:
         '200':
           description: Login berhasil
@@ -61,7 +59,6 @@ paths:
                 token: "jwt_token_value"
         '401':
           description: Kredensial salah
-
       security: []
 
   /api/logout:
@@ -73,9 +70,7 @@ paths:
         - `Content-Type: application/json`
         - `API_TOKEN: {API_TOKEN dari environment}`
         - `Authorization: Bearer {token dari login}`
-
-        Token harus valid agar proses logout berhasil.
-
+        - `APP_TOKEN_CURRENT_APP: {token dari aplikasi aktif}`
       responses:
         '200':
           description: Logout berhasil
@@ -85,19 +80,16 @@ paths:
                 message: "Logout success"
         '401':
           description: Token tidak valid atau tidak ditemukan
-
       security:
         - bearerAuth: []
+        - ApiKeyAuth: []
+        - AppKeyAuth: []
 
   /api/user:
     get:
       summary: Get All Users
       description: Mengambil semua data user tanpa filter.
-      parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
+      parameters: []
       responses:
         '200':
           description: Daftar semua user
@@ -111,23 +103,20 @@ paths:
                   name: "User B"
                   email: "userb@example.com"
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
 
   /api/user/{nopek}:
     get:
       summary: Get User by Nopek
       description: Mengambil data user berdasarkan nomor pekerja (nopek).
       parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
           schema:
             type: string
-          description: Nomor pekerja (nopek)
       responses:
         '200':
           description: Data user ditemukan
@@ -140,17 +129,14 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
 
   /api/approval-user:
     get:
       summary: Get Approval User All
-      description: Mengambil data approval semua user, termasuk informasi atasan dari layer paling rendah hingga tertinggi.
-      parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
+      description: Mengambil data approval semua user.
       responses:
         '200':
           description: Daftar approval user lengkap
@@ -168,23 +154,20 @@ paths:
         '401':
           description: Unauthorized
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
 
   /api/approval-user/{nopek}:
     get:
       summary: Get Approval User by Nopek
       description: Mengambil data approval user berdasarkan nomor pekerja (nopek).
       parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
           schema:
             type: string
-          description: Nomor pekerja (nopek)
       responses:
         '200':
           description: Data approval user ditemukan
@@ -202,20 +185,17 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
 
-  /api/approval-user/{nopek}/except/{layers}:
+  /api/approval-user/{nopek}/{layers}:
     get:
       summary: Get Approval User by Nopek with Excluded Layers
       description: |
         Mengambil data approval user berdasarkan nomor pekerja (nopek) dengan mengecualikan layer tertentu.  
-        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
-        Contoh: `2&1` akan mengecualikan layer 2 dan 1.
+        Gunakan `&` sebagai pemisah.
       parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: nopek
           required: true
@@ -241,20 +221,16 @@ paths:
         '404':
           description: User tidak ditemukan
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
 
-  /api/approval/except/{layers}:
+  /api/approval/{layers}:
     get:
       summary: Get Approval User Except Certain Layers (All Users)
       description: |
-        Mengambil data approval semua user dengan mengecualikan layer tertentu.  
-        Parameter `layers` bisa satu atau beberapa layer yang dipisahkan dengan `&`.  
-        Contoh: `1&2`
+        Mengambil data approval semua user dengan mengecualikan layer tertentu.
       parameters:
-        - $ref: '#/components/parameters/ContentType'
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/APIToken'
-        - $ref: '#/components/parameters/AppToken'
         - in: path
           name: layers
           required: true
@@ -276,7 +252,76 @@ paths:
         '401':
           description: Unauthorized
       security:
+        - bearerAuth: []
         - ApiKeyAuth: []
+        - AppKeyAuth: []
+
+  /api/mail-gateway:
+    post:
+      summary: Kirim Email via Mail Gateway
+      description: |
+        Endpoint untuk mengirim email melalui Mail Gateway PGNCOM.  
+        Field `from` bersifat tetap dan tidak dapat diganti.
+
+        Header **harus menyertakan**:
+        - `Content-Type: application/json`
+        - `Authorization: Bearer {token}`
+        - `API_TOKEN: {API_TOKEN}`
+        - `APP_TOKEN_CURRENT_APP: {APP_TOKEN dari aplikasi}`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                smtp_from:
+                  type: string
+                  example: noreply
+                from:
+                  type: string
+                  example: noreply@pgncom.co.id
+                from_name:
+                  type: string
+                  example: NOREPLY PGNCOM
+                to:
+                  type: array
+                  items:
+                    type: string
+                  example: ["dimas.aria@pgncom.co.id"]
+                cc:
+                  type: array
+                  items:
+                    type: string
+                bcc:
+                  type: array
+                  items:
+                    type: string
+                subject:
+                  type: string
+                  example: Test dari Development
+                mail_body:
+                  type: string
+                  format: html
+                  example: "<h1>Pengumuman Bahwa Dokumen Segera Ditandatangani</h1><p>Semoga harimu menyenangkan.</p>"
+                queue_delay:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Email berhasil dikirim
+          content:
+            application/json:
+              example:
+                message: "Email sent successfully"
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      security:
+        - bearerAuth: []
+        - ApiKeyAuth: []
+        - AppKeyAuth: []
 
 components:
   securitySchemes:
@@ -288,40 +333,12 @@ components:
       type: apiKey
       in: header
       name: API_TOKEN
-
-  parameters:
-    ContentType:
-      name: Content-Type
+    AppKeyAuth:
+      type: apiKey
       in: header
-      required: true
-      schema:
-        type: string
-        example: application/json
-
-    Authorization:
-      name: Authorization
-      in: header
-      required: true
-      schema:
-        type: string
-        example: Bearer {token}
-
-    APIToken:
-      name: API_TOKEN
-      in: header
-      required: true
-      schema:
-        type: string
-        example: your_api_token
-
-    AppToken:
       name: APP_TOKEN_CURRENT_APP
-      in: header
-      required: true
-      schema:
-        type: string
-        example: your_app_token
 
 security:
   - bearerAuth: []
   - ApiKeyAuth: []
+  - AppKeyAuth: []
