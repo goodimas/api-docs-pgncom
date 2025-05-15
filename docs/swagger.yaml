@@ -152,6 +152,8 @@ paths:
 
   /api/approval-user:
     get:
+      tags:
+        - Approval
       summary: Get Approval User All
       description: Mengambil data approval semua user, termasuk informasi atasan dari layer paling rendah hingga tertinggi.
       parameters:
