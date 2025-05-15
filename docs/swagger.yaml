@@ -664,7 +664,7 @@ paths:
                   type: string
                 file:
                   type: string
-                  description: Nama file dipisahkan dengan koma (contoh: 1.jpg,2.png)
+                  description: Nama file dipisahkan dengan koma (contoh; 1.jpg,2.png)
       responses:
         '200':
           description: File berhasil diunggah
@@ -770,8 +770,6 @@ paths:
           description: File berhasil dihapus
       security:
         - ApiKeyAuth: []
-
-
 
   /api/checkin-out:
     post:
