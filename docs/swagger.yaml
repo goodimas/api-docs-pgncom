@@ -23,16 +23,17 @@ servers:
   - url: https://api.pgncom.co.id
 
 paths:
-  /auth/login:
+  /api/login:
     post:
       summary: Login
       description: |
-        Endpoint untuk login pengguna.  
-        Header **harus** menyertakan:
-        - `Content-Type: application/json`
-        - `API_TOKEN: {API_TOKEN dari environment}`
+        Endpoint untuk login pengguna.
 
-        Setelah login berhasil, server akan mengembalikan token yang **disimpan oleh backend ke dalam HttpOnly Cookie**.
+        Header wajib:
+        - `Content-Type: application/json`
+        - `API_TOKEN: {API_TOKEN}`
+
+        Setelah login berhasil, backend akan menyimpan token ke dalam HttpOnly cookie.
 
       requestBody:
         required: true
@@ -50,7 +51,6 @@ paths:
               required:
                 - email
                 - password
-
       responses:
         '200':
           description: Login berhasil
@@ -62,20 +62,16 @@ paths:
         '401':
           description: Kredensial salah
 
-      parameters: []
-      security: []
-
-  /auth/logout:
+  /api/logout:
     post:
       summary: Logout
       description: |
-        Endpoint untuk logout pengguna.  
-        Header **harus** menyertakan:
-        - `Content-Type: application/json`
-        - `API_TOKEN: {API_TOKEN dari environment}`
-        - `Authorization: Bearer {token dari login}`
+        Endpoint untuk logout pengguna.
 
-        Token harus valid agar proses logout berhasil.
+        Header wajib:
+        - `Content-Type: application/json`
+        - `Authorization: Bearer {token}`
+        - `API_TOKEN: {API_TOKEN}`
 
       responses:
         '200':
@@ -85,16 +81,110 @@ paths:
               example:
                 message: "Logout success"
         '401':
-          description: Token tidak valid atau tidak ditemukan
+          description: Token tidak valid
 
+  /api/user:
+    get:
+      summary: Get All Users
+      description: Mengambil seluruh daftar user.
+      responses:
+        '200':
+          description: Sukses
       security:
-        - bearerAuth: []
+        - BearerWithToken: []
+
+  /api/user/{nopek}:
+    get:
+      summary: Get User by Nopek
+      description: Mengambil data user berdasarkan nomor pekerja (nopek).
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+      responses:
+        '200':
+          description: Sukses
+      security:
+        - BearerWithToken: []
+
+  /api/approval-user:
+    get:
+      summary: Get All Approval Users
+      description: Mendapatkan seluruh informasi atasan dari semua user (layer rendah hingga tertinggi).
+      responses:
+        '200':
+          description: Sukses
+      security:
+        - BearerWithToken: []
+
+  /api/approval-user/{nopek}:
+    get:
+      summary: Get Approval User by Nopek
+      description: Mendapatkan atasan dari user berdasarkan nomor pekerja (nopek).
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+      responses:
+        '200':
+          description: Sukses
+      security:
+        - BearerWithToken: []
+
+  /api/approval-user/{nopek}/{exceptLayer}:
+    get:
+      summary: Get Approval User by Nopek (Exclude Layer)
+      description: Mendapatkan atasan dari user dengan pengecualian layer tertentu (misal: 1&2).
+      parameters:
+        - name: nopek
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "0014830044"
+        - name: exceptLayer
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1&2"
+      responses:
+        '200':
+          description: Sukses
+      security:
+        - BearerWithToken: []
+
+  /api/approval/{exceptLayer}:
+    get:
+      summary: Get All Approval (Exclude Layer)
+      description: Mendapatkan semua approval user dengan pengecualian layer tertentu.
+      parameters:
+        - name: exceptLayer
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "1&2"
+      responses:
+        '200':
+          description: Sukses
+      security:
+        - BearerWithToken: []
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas: {}
+    BearerWithToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: |
+        Format: `Bearer {token}`  
+        Tambahkan juga header:
+        - `Content-Type: application/json`
+        - `API_TOKEN: {API_TOKEN dari environment}`
