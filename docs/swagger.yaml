@@ -770,6 +770,7 @@ paths:
           description: File berhasil dihapus
       security:
         - ApiKeyAuth: []
+
   /api/getAttendance/{nopek}/{date}:
     get:
       summary: Get Attendance by NOPEK and Date
@@ -795,7 +796,7 @@ paths:
         - name: date
           in: path
           required: true
-          description: Tanggal absensi (format: YYYY-MM-DD)
+          description: Tanggal absensi (format =  YYYY-MM-DD)
           schema:
             type: string
             format: date
