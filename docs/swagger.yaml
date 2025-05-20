@@ -841,6 +841,152 @@ paths:
         - ApiKeyAuth: []
 
 
+  /api/module/:
+    get:
+      summary: Get All Modules
+      tags:
+        - Module
+      description: Mendapatkan semua data module yang terdaftar
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Data module berhasil diambil
+      security:
+        - ApiKeyAuth: []
+
+  /api/createModule/:
+    post:
+      summary: Create New Module
+      tags:
+        - Module
+      description: Menambahkan module baru ke sistem
+      parameters:
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - app_key
+                - title_name
+                - title_code
+                - module_name
+                - module_url
+                - access_by
+                - status
+              properties:
+                app_key:
+                  type: string
+                  example: "xxxxx"
+                title_name:
+                  type: string
+                  example: "Dashboard"
+                title_code:
+                  type: string
+                  example: "T001"
+                module_name:
+                  type: string
+                  example: "User Management"
+                module_url:
+                  type: string
+                  example: "/users"
+                access_by:
+                  type: string
+                  example: "admin"
+                status:
+                  type: string
+                  example: "actived"
+      responses:
+        '201':
+          description: Module berhasil ditambahkan
+      security:
+        - ApiKeyAuth: []
+
+  /api/updateModule/{module_id}:
+    put:
+      summary: Update Existing Module
+      tags:
+        - Module
+      description: Memperbarui data module yang sudah ada
+      parameters:
+        - name: module_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "875f90c7-b492-47ed-a875-73aa108e35bc"
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_key:
+                  type: string
+                  example: "xxxxx"
+                title_name:
+                  type: string
+                  example: "Dashboard"
+                title_code:
+                  type: string
+                  example: "T001"
+                module_name:
+                  type: string
+                  example: "User Management"
+                module_url:
+                  type: string
+                  example: "/users"
+                access_by:
+                  type: string
+                  example: "admin"
+                status:
+                  type: string
+                  example: "actived"
+      responses:
+        '200':
+          description: Module berhasil diperbarui
+      security:
+        - ApiKeyAuth: []
+
+  /api/deleteModule/{module_id}:
+    delete:
+      summary: Delete Module
+      tags:
+        - Module
+      description: Menghapus module dari sistem berdasarkan UUID
+      parameters:
+        - name: module_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "875f90c7-b492-47ed-a875-73aa108e35bc"
+        - $ref: '#/components/parameters/ContentType'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/APIToken'
+        - $ref: '#/components/parameters/AppToken'
+      responses:
+        '200':
+          description: Module berhasil dihapus
+      security:
+        - ApiKeyAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
