@@ -863,7 +863,7 @@ paths:
                   description: Nama file atau foto yang telah diunggah ke object storage
                 Checktype:
                   type: string
-                  enum: [IN, OUT]
+                  enum: [IN, OUT, CUTI, SAKIT, ALPA]
                   example: "IN"
                   description: Jenis check (IN untuk masuk, OUT untuk keluar)
                 created_by:
