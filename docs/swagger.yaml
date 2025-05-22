@@ -857,6 +857,14 @@ paths:
                   type: string
                   example: "Gate-1"
                   description: Lokasi pembaca RFID
+                "longitude": 
+                  type: string
+                  example: "106.8233"
+                  description: Koordinat longitude
+                "latitude"
+                type: string
+                example: "6.9167"
+                description: Koordinat latitude
                 file:
                   type: string
                   example: "photo.jpg"
