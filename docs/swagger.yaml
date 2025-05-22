@@ -862,9 +862,9 @@ paths:
                   example: "106.8233"
                   description: Koordinat longitude
                 "latitude":
-                type: string
-                example: "6.9167"
-                description: Koordinat latitude
+                  type: string
+                  example: "6.9167"
+                  description: Koordinat latitude
                 file:
                   type: string
                   example: "photo.jpg"
