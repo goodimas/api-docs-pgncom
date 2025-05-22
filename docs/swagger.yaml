@@ -861,7 +861,7 @@ paths:
                   type: string
                   example: "106.8233"
                   description: Koordinat longitude
-                "latitude"
+                "latitude":
                 type: string
                 example: "6.9167"
                 description: Koordinat latitude
