@@ -836,6 +836,8 @@ paths:
                 - file
                 - Checktype
                 - created_by
+                - longitude
+                - latitude
               properties:
                 ClientType:
                   type: integer
